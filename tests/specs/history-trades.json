@@ -1,20 +1,8 @@
 [
   {
-    "name": "View Trade History",
+    "name": "View empty trade history",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "See executed and pending trades with status"
-            }
-          }
-        ],
-        "send": {
-          "callback": "history:trades"
-        }
-      }
+      { "send": { "callback": "history:trades" }, "expect": [{ "method": "sendMessage", "payload": { "text": "No trades yet — valid channel signals will appear here." } }] }
     ]
   }
 ]

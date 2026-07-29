@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Signal detection, confirmation, and unavailable IQ Option handling",
+    "steps": [
+      { "send": { "callback": "config:channel" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "-1001234567890" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "update": { "update_id": 30, "channel_post": { "message_id": 99, "date": 0, "chat": { "id": -1001234567890, "type": "channel", "title": "Signals" }, "text": "Asset: EUR/USD CALL Timeframe: 5m Confidence: 80%" } } }, "expect": [{ "method": "sendMessage", "payload": { "text": "New trade signal\nAsset: EUR/USD\nDirection: CALL\nTrade size: 7.5% of balance\nTimeframe: 5m\nConfidence: 80%" } }] },
+      { "send": { "callback": "trade:-1001234567890:99" }, "expect": [{ "method": "editMessageText", "payload": { "text": "New trade signal\nAsset: EUR/USD\nDirection: CALL\nTrade size: 7.5% of balance\nTimeframe: 5m\nConfidence: 80%\n\nConfirm this trade?" } }] },
+      { "send": { "callback": "confirm:-1001234567890:99:yes" }, "expect": [{ "method": "editMessageText", "payload": { "text": "IQ Option isn’t set up yet. Add the authorised connection, then try again." } }] }
+    ]
+  },
+  {
+    "name": "Signal missing asset and direction is ignored",
+    "steps": [
+      { "send": { "callback": "config:channel" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "-1001234567890" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "update": { "update_id": 31, "channel_post": { "message_id": 100, "date": 0, "chat": { "id": -1001234567890, "type": "channel", "title": "Signals" }, "text": "Confidence: 80% Timeframe: 5m" } } }, "expect": [] }
+    ]
+  }
+]

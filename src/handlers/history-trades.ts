@@ -1,17 +1,28 @@
 import { Composer } from "grammy";
+import type { Ctx } from "../bot.js";
+import { inlineButton, inlineKeyboard, registerMainMenuItem } from "../toolkit/index.js";
+import { ensureOwner, tradesForOwner } from "../domain/store.js";
 
-// SCAFFOLD — generated from the bot blueprint BEFORE the agent runs.
-// Keep a LIVE registration (.command / .callbackQuery / …) so this feature is
-// never an empty stub. Replace the reply body with real logic + copy; if you
-// change the user-facing text, update tests/specs to match EXACTLY.
-// Do NOT rewrite src/bot.ts — buildBot() already auto-loads this module.
-// Menu: wire this into /start via registerMainMenuItem({ label: "View Trade History", data: "history:trades" }) if the toolkit exposes it.
-
-const composer = new Composer();
+registerMainMenuItem({ label: "View trade history", data: "history:trades", order: 40 });
+const composer = new Composer<Ctx>();
 
 composer.callbackQuery("history:trades", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.reply("See executed and pending trades with status");
+  if (ctx.chat === undefined || ctx.from === undefined) return;
+  const settings = await ensureOwner(ctx.chat.id, ctx.from.id);
+  if (settings.ownerId !== ctx.from.id) return void (await ctx.reply("Only the account owner can view trade history."));
+  const trades = await tradesForOwner(ctx.chat.id);
+  if (trades.length === 0) {
+    await ctx.reply("No trades yet — valid channel signals will appear here.");
+    return;
+  }
+  const lines = trades.slice(0, 10).map((trade) => {
+    const amount = trade.amount === undefined ? "Amount pending" : `Amount ${trade.amount}`;
+    return `${trade.asset} ${trade.direction.toUpperCase()} · ${trade.status} · ${amount}`;
+  });
+  await ctx.reply(`Your recent trades:\n${lines.join("\n")}`, {
+    reply_markup: inlineKeyboard([[inlineButton("Back to menu", "menu:main")]]),
+  });
 });
 
 export default composer;
