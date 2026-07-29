@@ -1,20 +1,9 @@
 [
   {
-    "name": "Configure Channel",
+    "name": "Configure Channel and save it",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Set or change the monitored Telegram channel"
-            }
-          }
-        ],
-        "send": {
-          "callback": "config:channel"
-        }
-      }
+      { "send": { "callback": "config:channel" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Send the channel ID or @username to monitor." } }] },
+      { "send": { "text": "-1001234567890" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Channel updated. I’ll send valid signals here." } }] }
     ]
   }
 ]

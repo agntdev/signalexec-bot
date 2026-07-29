@@ -1,20 +1,9 @@
 [
   {
-    "name": "Adjust Trade Percentage",
+    "name": "Adjust Trade Percentage and save it",
     "steps": [
-      {
-        "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Change the fixed percentage of balance used for trades"
-            }
-          }
-        ],
-        "send": {
-          "callback": "config:percent"
-        }
-      }
+      { "send": { "callback": "config:percent" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Send the percentage of your available balance for each trade." } }] },
+      { "send": { "text": "7.5" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Each trade will use 7.5% of your available balance." } }] }
     ]
   }
 ]
