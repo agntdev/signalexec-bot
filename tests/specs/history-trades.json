@@ -1,0 +1,20 @@
+[
+  {
+    "name": "View Trade History",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "See executed and pending trades with status"
+            }
+          }
+        ],
+        "send": {
+          "callback": "history:trades"
+        }
+      }
+    ]
+  }
+]
